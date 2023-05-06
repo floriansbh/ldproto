@@ -1,0 +1,11 @@
+{
+  "name": "ldproto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "repository": "floriansbh/ldproto",
+  "keywords": ["ldp", "protocol", "ipc"],
+  "author": "floriansbh",
+  "license": "ISC"
+}
