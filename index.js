@@ -136,22 +136,38 @@ export class LdpStream extends EventEmitter {
         this.#stream.write(new Uint8Array([1])); // END
     }
 
-    ping() {
+    ping(timeout = 30_000) {
         const pingTs = Date.now();
         this.#stream.write(new Uint8Array([2])); // PING
-        return new Promise(resolve => this.once("pong", () => {
-            this.rtt = Date.now() - pingTs;
-            resolve();
-        }));
+        return new Promise((resolve, reject) => {
+            const pingTimeout = setTimeout(() => {
+                this.removeAllListeners("pong");
+                reject();
+            }, timeout);
+
+            this.once("pong", () => {
+                clearTimeout(pingTimeout);
+                this.rtt = Date.now() - pingTs;
+                resolve();
+            });
+        });
     }
 
-    greet() {
+    greet(timeout = 30_000) {
         const greetTs = Date.now();
         this.sessionId = randomBytes(4);
         this.#stream.write(Buffer.concat([new Uint8Array([4]), this.sessionId])); // SERVER HELLO
-        return new Promise(resolve => this.once("clientHello", () => {
-            this.rtt = Date.now() - greetTs;
-            resolve();
-        }));
+        return new Promise((resolve, reject) => {
+            const greetTimeout = setTimeout(() => {
+                this.removeAllListeners("clientHello");
+                reject();
+            }, timeout);
+
+            this.once("clientHello", () => {
+                clearTimeout(greetTimeout);
+                this.rtt = Date.now() - greetTs;
+                resolve();
+            });
+        });
     }
 }
