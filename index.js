@@ -142,7 +142,7 @@ export class LdpStream extends EventEmitter {
         return new Promise((resolve, reject) => {
             const pingTimeout = setTimeout(() => {
                 this.removeAllListeners("pong");
-                reject();
+                reject("Timed out");
             }, timeout);
 
             this.once("pong", () => {
@@ -160,7 +160,7 @@ export class LdpStream extends EventEmitter {
         return new Promise((resolve, reject) => {
             const greetTimeout = setTimeout(() => {
                 this.removeAllListeners("clientHello");
-                reject();
+                reject("Timed out");
             }, timeout);
 
             this.once("clientHello", () => {
